@@ -39,4 +39,5 @@ class Channel:
         #     duration = isodate.parse_duration(iso_8601_duration)
         #     print(duration)
 
+
         self.channel_info = json.dumps(channel, indent=2, ensure_ascii=False)
