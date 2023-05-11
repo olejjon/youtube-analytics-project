@@ -6,14 +6,24 @@ from googleapiclient.discovery import build
 
 class Channel:
     """Класс для ютуб-канала"""
-
-    api_key = os.getenv('YT_API_KEY')
-    api_key1 = os.environ['api_key']
+    api_key = os.environ['api_key']
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.channel_id = channel_id
         self.channel_info = {}
+        self.channel = Channel.get_channel(self.channel_id)
+        self.title = self.channel['items'][0]['snippet']['title']
+        self.description = self.channel['items'][0]['snippet']['description']
+        self.url = f'https://www.youtube.com/channel/{self.channel_id}'
+        self.quality_subscribers = self.channel['items'][0]['statistics']['subscriberCount']
+        self.video_count = self.channel['items'][0]['statistics']['videoCount']
+        self.quality_views = self.channel['items'][0]['statistics']['viewCount']
+
+    @classmethod
+    def get_channel(cls, channel_id):
+        youtube = build('youtube', 'v3', developerKey=Channel.api_key)
+        return youtube.channels().list(id=channel_id, part='snippet,statistics').execute()
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
@@ -21,23 +31,19 @@ class Channel:
         print(self.channel_info)
 
     def info_youtube(self) -> None:
-        youtube = build('youtube', 'v3', developerKey=Channel.api_key1)
+        youtube = build('youtube', 'v3', developerKey=Channel.api_key)
         channel = youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
-
-        # playlist_id = 'PLguYHBi01DWr4bRWc4uaguASmo7lW4GCb'
-        # playlist_videos = youtube.playlistItems().list(playlistId=playlist_id,
-        #                                                part='contentDetails',
-        #                                                maxResults=50,
-        #                                                ).execute()
-        # video_ids: list[str] = [video['contentDetails']['videoId'] for video in playlist_videos['items']]
-        # video_response = youtube.videos().list(part='contentDetails,statistics',
-        #                                        id=','.join(video_ids)
-        #                                        ).execute()
-        # for video in video_response['items']:
-        #     # YouTube video duration is in ISO 8601 format
-        #     iso_8601_duration = video['contentDetails']['duration']
-        #     duration = isodate.parse_duration(iso_8601_duration)
-        #     print(duration)
-
-
         self.channel_info = json.dumps(channel, indent=2, ensure_ascii=False)
+
+    def to_json(self, filename):
+        data = {
+            'channel_id': self.channel_id,
+            'title': self.title,
+            'description': self.description,
+            'url': self.url,
+            'quality_subscribers': self.quality_subscribers,
+            'video_count': self.video_count,
+            'quality_views': self.quality_views,
+        }
+        with open(filename, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=2)
