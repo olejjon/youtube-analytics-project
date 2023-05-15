@@ -12,7 +12,7 @@ class Channel:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.channel_id = channel_id
         self.channel_info = {}
-        self.channel = Channel.get_channel(self.channel_id)
+        self.channel = self.get_channel(self.channel_id)
         self.title = self.channel['items'][0]['snippet']['title']
         self.description = self.channel['items'][0]['snippet']['description']
         self.url = f'https://www.youtube.com/channel/{self.channel_id}'
