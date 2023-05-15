@@ -16,9 +16,31 @@ class Channel:
         self.title = self.channel['items'][0]['snippet']['title']
         self.description = self.channel['items'][0]['snippet']['description']
         self.url = f'https://www.youtube.com/channel/{self.channel_id}'
-        self.quality_subscribers = self.channel['items'][0]['statistics']['subscriberCount']
+        self.quality_subscribers = int(self.channel['items'][0]['statistics']['subscriberCount'])
         self.video_count = self.channel['items'][0]['statistics']['videoCount']
         self.quality_views = self.channel['items'][0]['statistics']['viewCount']
+
+    def __str__(self):
+        return f'{self.title} ({self.url})'
+
+    def __add__(self, other):
+        return self.quality_subscribers + other.quality_subscribers
+
+    def __sub__(self, other):
+        return self.quality_subscribers - other.quality_subscribers
+
+    def __lt__(self, other):
+        return self.quality_subscribers < other.quality_subscribers
+
+    def __le__(self, other):
+        return self.quality_subscribers <= other.quality_subscribers
+
+    def __gt__(self, other):
+        return self.quality_subscribers > other.quality_subscribers
+
+    def __ge__(self, other):
+        return self.quality_subscribers >= other.quality_subscribers
+
 
     @classmethod
     def get_channel(cls, channel_id):
