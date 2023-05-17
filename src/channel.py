@@ -41,7 +41,6 @@ class Channel:
     def __ge__(self, other):
         return self.quality_subscribers >= other.quality_subscribers
 
-
     @classmethod
     def get_channel(cls, channel_id):
         youtube = build('youtube', 'v3', developerKey=Channel.api_key)
