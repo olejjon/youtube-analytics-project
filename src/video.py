@@ -13,15 +13,21 @@ class Video:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         response = self.get_video_info(video_id)
 
-        if response.get('items'):
+        try:
             video_info = response['items'][0]
             self.id_channel = video_info['id']
             self.title = video_info['snippet']['title']
             self.url = f"https://www.youtube.com/channel/{video_info}"
             self.quality_views = video_info['statistics']['viewCount']
             self.quality_likes = video_info['statistics']['likeCount']
-        else:
-            raise Exception(f"Не найден канал по данному id: {video_id}")
+        except Exception:
+            self.id_channel = video_id
+            self.title = None
+            self.url = None
+            self.views_count = None
+            self.like_count = None
+            print(f"Не найден канал по данному id: {video_id}")
+            # raise Exception(f"Не найден канал по данному id: {video_id}")
 
     def __str__(self):
         return f'{self.title}'
